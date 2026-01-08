@@ -48,8 +48,8 @@ export const useApp = () => {
 };
 
 // Fix: Moved ProtectedRoute definition to the top level and ensured it's defined before usage in AppLayout.
-// This resolves the error where 'children' was reported as missing by providing a clear component type in scope.
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+// Updated: Made 'children' optional to satisfy TypeScript when component is used with JSX children in Route elements.
+const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   const { user } = useApp();
   if (!user.isLoggedIn) return <Navigate to="/auth" replace />;
   return <>{children}</>;

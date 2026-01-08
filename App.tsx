@@ -47,6 +47,14 @@ export const useApp = () => {
   return context;
 };
 
+// Fix: Moved ProtectedRoute definition to the top level and ensured it's defined before usage in AppLayout.
+// This resolves the error where 'children' was reported as missing by providing a clear component type in scope.
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useApp();
+  if (!user.isLoggedIn) return <Navigate to="/auth" replace />;
+  return <>{children}</>;
+};
+
 const App: React.FC = () => {
   const [state, setState] = useState<DataState>(() => {
     const saved = localStorage.getItem('payment_trackers_v3');
@@ -172,11 +180,6 @@ const App: React.FC = () => {
     }
   }), [state]);
 
-  const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-    if (!state.user.isLoggedIn) return <Navigate to="/auth" replace />;
-    return <>{children}</>;
-  };
-
   return (
     <AppContext.Provider value={value}>
       <HashRouter>
@@ -270,12 +273,6 @@ const AppLayout: React.FC<{ isSyncing: boolean }> = ({ isSyncing }) => {
       </main>
     </div>
   );
-};
-
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user } = useApp();
-  if (!user.isLoggedIn) return <Navigate to="/auth" replace />;
-  return <>{children}</>;
 };
 
 const Sidebar = () => {
